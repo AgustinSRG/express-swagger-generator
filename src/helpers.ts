@@ -64,11 +64,15 @@ function _attachTags(conf: any) {
  */
 function _objectMerge(obj1: any, obj2: any) {
     const obj3 = Object.create(null);
-    for (const attr of Object.keys(obj1)) {
-        obj3[attr] = obj1[attr];
+    if (obj1) {
+        for (const attr of Object.keys(obj1)) {
+            obj3[attr] = obj1[attr];
+        }
     }
-    for (const name of Object.keys(obj2)) {
-        obj3[name] = obj2[name];
+    if (obj2) {
+        for (const name of Object.keys(obj2)) {
+            obj3[name] = obj2[name];
+        }
     }
     return obj3;
 }

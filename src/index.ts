@@ -6,7 +6,7 @@ import fs from 'fs';
 import glob from 'glob';
 import path from 'path';
 import SwaggerParser from 'swagger-parser';
-import doctrineFile from 'doctrine-file';
+import { parseFileContent } from 'doctrine-file';
 import swaggerUi from 'express-swaggerize-ui';
 import { addDataToSwaggerObject, swaggerizeObj } from './helpers';
 
@@ -18,8 +18,7 @@ import { addDataToSwaggerObject, swaggerizeObj } from './helpers';
  */
 function parseApiFile(file: string) {
     const content = fs.readFileSync(file, 'utf-8');
-
-    const comments = doctrineFile.parseFileContent(content, { unwrap: true, sloppy: true, tags: null, recoverable: true });
+    const comments = parseFileContent(content, { unwrap: true, sloppy: true, tags: null, recoverable: true });
     return comments;
 }
 
@@ -436,9 +435,9 @@ interface SwgaggerGeneratorOptions {
         produces: string[],
         schemes: string[],
         securityDefinitions?: {[key: string]: {
-            type: "string",
-            in: "string",
-            name: "string"
+            type: string,
+            in: string,
+            name: string
         }},
     },
 }
@@ -459,12 +458,11 @@ function generateSpecAndMount(app: any, options: SwgaggerGeneratorOptions) {
     const apiFiles = convertGlobPaths(options.basedir, options.files);
 
     // Parse the documentation in the APIs array.
-    for (let i = 0; i < apiFiles.length; i = i + 1) {
-        const parsedFile = parseApiFile(apiFiles[i]);
-        //console.log(JSON.stringify(parsedFile))
+    for (const file of apiFiles) {
+        const parsedFile = parseApiFile(file);
         const comments = filterJsDocComments(parsedFile);
 
-        for (const j in comments) {
+        for (const j of Object.keys(comments)) {
             try {
                 const parsed = fileFormat(comments[j])
                 addDataToSwaggerObject(swaggerObject, [{
@@ -473,12 +471,12 @@ function generateSpecAndMount(app: any, options: SwgaggerGeneratorOptions) {
                     definitions: parsed.definitions
                 }]);
             } catch (e) {
-                console.log(`Incorrect comment format. Method was not documented.\nFile: ${apiFiles[i]}\nComment:`, comments[j])
+                throw new Error(`Incorrect comment format. Method was not documented.\nFile: ${file}\nComment: ${comments[j].description}`)
             }
         }
     }
 
-    SwaggerParser.default.parse(swaggerObject, function (err, api) {
+    (<any>SwaggerParser).parse(swaggerObject, function (err, api) {
         if (!err) {
             swaggerObject = api;
         }
