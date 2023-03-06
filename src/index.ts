@@ -412,7 +412,9 @@ function filterJsDocComments(jsDocComments: any[]) {
  */
 function convertGlobPaths(base: string, globs: string[]): string[] {
     return globs.reduce(function (acc, globString) {
-        const globFiles = globSync(globString, { cwd: base });
+        const globFiles = globSync(globString, { cwd: base }).map(p => {
+            return path.resolve(base, p);
+        });
         return acc.concat(globFiles);
     }, []);
 }
