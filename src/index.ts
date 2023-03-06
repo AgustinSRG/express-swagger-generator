@@ -171,7 +171,6 @@ function parseConsumes(str: string): string[] {
 function parseTypedef(tags: any) {
     const typeName = tags[0]['name'];
     const details: any = {
-        required: null,
         properties: {}
     };
     if (tags[0].type && tags[0].type.name) {
@@ -187,7 +186,7 @@ function parseTypedef(tags: any) {
             const readOnly = props.indexOf('readOnly') > -1
 
             if (required) {
-                if (details.required === null) details.required = [];
+                if (!details.required) details.required = [];
                 propName = propName.split('.')[0];
                 details.required.push(propName);
             }
