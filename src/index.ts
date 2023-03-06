@@ -3,7 +3,7 @@
 "use strict";
 
 import fs from 'fs';
-import glob from 'glob';
+import { globSync } from 'glob';
 import path from 'path';
 import SwaggerParser from 'swagger-parser';
 import { parseFileContent } from 'doctrine-file';
@@ -171,7 +171,7 @@ function parseConsumes(str: string): string[] {
 function parseTypedef(tags: any) {
     const typeName = tags[0]['name'];
     const details: any = {
-        required: [],
+        required: null,
         properties: {}
     };
     if (tags[0].type && tags[0].type.name) {
@@ -412,7 +412,7 @@ function filterJsDocComments(jsDocComments: any[]) {
  */
 function convertGlobPaths(base: string, globs: string[]): string[] {
     return globs.reduce(function (acc, globString) {
-        const globFiles = glob.sync(path.resolve(base, globString));
+        const globFiles = globSync(globString, { cwd: base });
         return acc.concat(globFiles);
     }, []);
 }
@@ -434,11 +434,13 @@ interface SwgaggerGeneratorOptions {
         basePath: string,
         produces: string[],
         schemes: string[],
-        securityDefinitions?: {[key: string]: {
-            type: string,
-            in: string,
-            name: string
-        }},
+        securityDefinitions?: {
+            [key: string]: {
+                type: string,
+                in: string,
+                name: string
+            }
+        },
     },
 }
 
