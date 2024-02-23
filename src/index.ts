@@ -422,6 +422,8 @@ interface SwgaggerGeneratorOptions {
     route?: {
         url?: string,
         docs?: string,
+        externalURL?: string,
+        externalDocs?: string,
     },
     files: string[],
     basedir: string,
@@ -485,16 +487,20 @@ function generateSpecAndMount(app: any, options: SwgaggerGeneratorOptions) {
         }
     });
 
-    const url = options.route ? options.route.url : '/api-docs'
-    const docs = options.route ? options.route.docs : '/api-docs.json'
+    const url = options.route ? options.route.url : '/api-docs';
+    const externalURL = options.route ? (options.route.externalURL || options.route.url) : '/api-docs';
+    const docs = options.route ? options.route.docs : '/api-docs.json';
+    const externalDocs = options.route ? (options.route.externalDocs || options.route.docs) : '/api-docs.json';
 
     app.use(docs, function (req, res) {
         res.json(swaggerObject);
     });
+
     app.use(url, swaggerUi({
-        route: url,
-        docs: docs
+        route: externalURL,
+        docs: externalDocs
     }));
+
     return swaggerObject;
 }
 
