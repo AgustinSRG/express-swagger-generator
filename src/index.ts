@@ -69,7 +69,7 @@ function parseSchema(obj: any) {
     if (obj.applications) {
         if (obj.applications.length === 1) {
             const type = obj.applications[0].name;
-            if (type === 'object' || type === 'string' || type === 'integer' || type === 'boolean') {
+            if (type === 'object' || type === 'string' || type === 'integer' || type === 'number' || type === 'boolean') {
                 return {
                     type: obj.expression.name.toLowerCase(),
                     items: {
@@ -88,7 +88,7 @@ function parseSchema(obj: any) {
         const oneOf = []
         for (const i of Object.keys(obj.applications)) {
             const type = obj.applications[i].name;
-            if (type === 'object' || type === 'string' || type === 'integer' || type === 'boolean') {
+            if (type === 'object' || type === 'string' || type === 'integer' || type === 'number' || type === 'boolean') {
                 oneOf.push({
                     "type": type
                 })
@@ -112,7 +112,7 @@ function parseSchema(obj: any) {
 function parseItems(obj: any) {
     if (obj.applications && obj.applications.length > 0 && obj.applications[0].name) {
         const type = obj.applications[0].name;
-        if (type === 'object' || type === 'string' || type === 'integer' || type === 'boolean') {
+        if (type === 'object' || type === 'string' || type === 'integer' || type === 'number' || type === 'boolean') {
             return { "type": type }
         } else {
             return { "$ref": "#/definitions/" + type };
