@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
  * @route POST /hello/
  * @group hello - Test Demo
  * @param {ReqNameJSON.model} name.body.required - username or email
- * @returns {object} 200 - An object with the key 'msg'
+ * @returns {Product.model} 200 - An object with the key 'msg'
  * @returns {Error}  default - Unexpected error
  * @headers {integer} 200.X-Rate-Limit - calls per hour allowed by the user
  * @headers {string} 200.X-Expires-After - 	date in UTC when token expires
@@ -39,6 +39,8 @@ router.post("/", function() {});
  * @property {integer} id
  * @property {string} name.required - Some description for product
  * @property {Array.<Point>} Point
+ * @property {Array.<number>} testArrayNumbers
+ * @property {Array.<Array.<number>>} testMatrixNumbers
  */
 
 /**
@@ -55,6 +57,7 @@ router.post("/", function() {});
 
 /**
  * @route GET /test/
+ * @param {Array.<Array.<number>>} matrix.body.required - Matrix example
  * @returns {Array.<Point>} Point - Some description for point
  */
 router.get('/test', function() {});

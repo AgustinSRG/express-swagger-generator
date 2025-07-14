@@ -69,12 +69,18 @@ function parseSchema(obj: any) {
     if (obj.applications) {
         if (obj.applications.length === 1) {
             const type = obj.applications[0].name;
+            // console.log(JSON.stringify(obj));
             if (type === 'object' || type === 'string' || type === 'integer' || type === 'number' || type === 'boolean') {
                 return {
                     type: obj.expression.name.toLowerCase(),
                     items: {
                         "type": type
                     }
+                }
+            } else if (obj.applications[0].type === "TypeApplication") {
+                return {
+                    type: "array",
+                    items: parseSchema(obj.applications[0])
                 }
             } else {
                 return {
@@ -114,6 +120,11 @@ function parseItems(obj: any) {
         const type = obj.applications[0].name;
         if (type === 'object' || type === 'string' || type === 'integer' || type === 'number' || type === 'boolean') {
             return { "type": type }
+        } else if (obj.applications[0].type === "TypeApplication") {
+            return {
+                type: "array",
+                items: parseItems(obj.applications[0])
+            }
         } else {
             return { "$ref": "#/definitions/" + type };
         }
